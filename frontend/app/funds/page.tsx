@@ -13,7 +13,7 @@ export default async function FundsPage() {
   const funds = (await safe(getFunds())) || [];
   return (
     <Shell>
-      <PageHeader eyebrow="Mutual fund analyzer" title="Search fund categories" description="Compare category-level mock funds by returns, cost, AUM, drawdown, risk-adjusted placeholders, and suitability." />
+      <PageHeader eyebrow="Mutual fund analyzer" title="Search fund categories" description="Compare category-level fund models by returns, cost, AUM, drawdown, risk-adjusted signals, and suitability." />
       <div className="space-y-6">
         <DisclaimerBanner />
         <SearchBox type="funds" />

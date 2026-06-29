@@ -20,7 +20,7 @@ export default async function StockDetailPage({ params }: { params: { symbol: st
       <div className="space-y-6">
         <DisclaimerBanner text={analysis.disclaimer} />
         <div className="rounded-lg border border-sky/25 bg-sky/10 p-4 text-sm text-sky">
-          Quote source: {stock.dataSource || "mock-seed"}
+          Quote source: {stock.dataSource || "model-universe"}
           {stock.lastUpdated ? ` · Last updated ${new Date(stock.lastUpdated).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}` : ""}
         </div>
         <Card title="AI recommendation" action={<ScoreBadge score={analysis.score} label={analysis.label} />}>

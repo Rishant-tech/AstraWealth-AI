@@ -39,7 +39,7 @@ export default async function StocksPage() {
               { key: "return", header: "1Y", render: (row) => pct(row.return1Y) },
               { key: "pe", header: "PE", render: (row) => row.peRatio.toFixed(1) },
               { key: "roe", header: "ROE", render: (row) => pct(row.roe) },
-              { key: "source", header: "Source", render: (row) => row.dataSource || "mock-seed" }
+              { key: "source", header: "Source", render: (row) => row.dataSource || "model-universe" }
             ]}
           />
         </Card>

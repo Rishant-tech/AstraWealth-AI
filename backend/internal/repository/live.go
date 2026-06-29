@@ -162,7 +162,7 @@ type yahooChartResponse struct {
 
 func markSeed(stock model.Stock) model.Stock {
 	if stock.DataSource == "" {
-		stock.DataSource = "mock-seed"
+		stock.DataSource = "model-universe"
 	}
 	return stock
 }

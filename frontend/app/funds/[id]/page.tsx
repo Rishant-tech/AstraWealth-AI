@@ -30,7 +30,7 @@ export default async function FundDetailPage({ params }: { params: { id: string 
         </Card>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MetricCard label="NAV" value={inr(fund.nav)} delta="Latest mock NAV" />
+          <MetricCard label="NAV" value={inr(fund.nav)} delta="Reference NAV" />
           <MetricCard label="1Y / 3Y / 5Y" value={`${pct(fund.return1Y)} / ${pct(fund.return3Y)}`} delta={`5Y ${pct(fund.return5Y)}`} tone="sky" />
           <MetricCard label="Expense ratio" value={plainPct(fund.expenseRatio)} delta={`AUM ${inr(fund.aum)} Cr`} tone="amber" />
           <MetricCard label="Sharpe / Alpha" value={`${fund.sharpeRatio.toFixed(2)} / ${fund.alpha.toFixed(1)}`} delta={`Beta ${fund.beta.toFixed(2)}`} tone="violet" />

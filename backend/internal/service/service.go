@@ -251,16 +251,16 @@ func suggestedFundAllocation(risk string, score int) int {
 
 func fundPros(fund model.Fund) []string {
 	return []string{
-		fmt.Sprintf("Five-year return profile is %.1f%% in the mock dataset.", fund.Return5Y),
+		fmt.Sprintf("Five-year return profile is %.1f%% in the model universe.", fund.Return5Y),
 		fmt.Sprintf("Expense ratio of %.2f%% supports cost-aware comparison.", fund.ExpenseRatio),
-		"Score includes drawdown and risk-adjusted return placeholders.",
+		"Score includes drawdown and risk-adjusted return estimates.",
 	}
 }
 
 func fundCons(fund model.Fund) []string {
 	return []string{
-		fmt.Sprintf("Max drawdown placeholder is %.1f%%, so position sizing matters.", fund.MaxDrawdown),
-		"Past returns and rolling return placeholders do not guarantee future outcomes.",
+		fmt.Sprintf("Max drawdown estimate is %.1f%%, so position sizing matters.", fund.MaxDrawdown),
+		"Past returns and rolling return estimates do not guarantee future outcomes.",
 		"Category suitability depends on investor horizon and risk appetite.",
 	}
 }

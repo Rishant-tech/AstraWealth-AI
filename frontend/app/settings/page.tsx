@@ -13,14 +13,14 @@ export default function SettingsPage() {
         <DisclaimerBanner />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard label="Default risk" value="Moderate" delta="Used by planner presets" icon={SlidersHorizontal} tone="sky" />
-          <MetricCard label="Data mode" value="Mock seed" delta="10 stocks and 10 fund categories" icon={Server} />
+          <MetricCard label="Data mode" value="Live-enabled" delta="Delayed stock quotes with model fallback" icon={Server} />
           <MetricCard label="OpenAI layer" value="Optional" delta="Falls back to local rules" icon={KeyRound} tone="violet" />
           <MetricCard label="Safety mode" value="On" delta="No guaranteed returns language" icon={ShieldCheck} tone="amber" />
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           <Card title="Default assumptions">
             <div className="space-y-3 text-sm text-slate-300">
-              {["Base currency: INR", "Default horizon: 7 years", "Default goal: Wealth creation", "Preferred deployment: phased lump sum"].map((item) => (
+              {["Base currency: INR", "Default horizon: 7 years", "Default goal: Wealth creation", "Preferred deployment: SIP or phased lump sum"].map((item) => (
                 <div key={item} className="rounded-lg border border-white/10 bg-white/5 p-3">{item}</div>
               ))}
             </div>
@@ -33,7 +33,7 @@ export default function SettingsPage() {
         </div>
         <Card title="Limitations">
           <p className="text-sm leading-6 text-slate-300">
-            This build uses seeded mock data and educational scoring logic. It is suitable for product demos and architecture extension, not for live trading decisions.
+            Stock prices are live-enabled where available and may be delayed. Fundamentals, fund categories, commodity scenarios, and scores use educational model assumptions, so they are not investment advice or trading signals.
           </p>
         </Card>
       </div>
