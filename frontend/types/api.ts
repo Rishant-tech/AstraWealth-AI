@@ -80,12 +80,15 @@ export type FundAnalysis = {
 
 export type Commodity = {
   name: string;
+  currentPrice?: number;
   trend: string;
   return1Y: number;
   riskScore: number;
   suggestedMaxAllocation: number;
   scenarioProjections: ProjectionPoint[];
   notes: string[];
+  dataSource?: string;
+  lastUpdated?: string;
 };
 
 export type CommoditiesAnalysis = {
@@ -106,6 +109,7 @@ export type AllocationItem = {
 
 export type PortfolioPlanRequest = {
   totalInvestment: number;
+  monthlySIP: number;
   emergencyFundRequirement: number;
   timeHorizonYears: number;
   riskAppetite: string;

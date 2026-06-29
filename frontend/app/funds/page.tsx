@@ -1,6 +1,7 @@
 import { Card } from "@/components/Card";
 import { DataTable } from "@/components/DataTable";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
+import { InstrumentDirectory } from "@/components/InstrumentDirectory";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBox } from "@/components/SearchBox";
 import { Shell } from "@/components/Shell";
@@ -16,7 +17,19 @@ export default async function FundsPage() {
       <div className="space-y-6">
         <DisclaimerBanner />
         <SearchBox type="funds" />
-        <Card title="Seed mutual fund universe" eyebrow="Mock data">
+        <Card title="Mutual funds A-Z" eyebrow="Directory">
+          <InstrumentDirectory
+            emptyText="No mutual fund category available under this alphabet in the current universe."
+            items={funds.map((fund) => ({
+              id: fund.id,
+              title: fund.name,
+              subtitle: fund.category,
+              meta: `${fund.riskLevel} risk · ${fund.suitableFor}`,
+              href: `/funds/${fund.id}`
+            }))}
+          />
+        </Card>
+        <Card title="Mutual fund universe" eyebrow="Categories">
           <DataTable<Fund>
             rows={funds}
             columns={[

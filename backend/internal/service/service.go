@@ -75,6 +75,7 @@ func (s *AnalysisService) Commodities() model.CommoditiesAnalysis {
 	return model.CommoditiesAnalysis{
 		Gold: model.Commodity{
 			Name:                   "Gold",
+			CurrentPrice:           100000,
 			Trend:                  "Constructive hedge trend with valuation sensitivity",
 			Return1Y:               16.8,
 			RiskScore:              42,
@@ -84,9 +85,12 @@ func (s *AnalysisService) Commodities() model.CommoditiesAnalysis {
 				"Useful as a portfolio hedge during currency or equity stress.",
 				"Avoid increasing allocation only after sharp price moves.",
 			},
+			DataSource:  "commodity-model",
+			LastUpdated: "daily model",
 		},
 		Silver: model.Commodity{
 			Name:                   "Silver",
+			CurrentPrice:           100000,
 			Trend:                  "Higher volatility with industrial demand linkage",
 			Return1Y:               19.2,
 			RiskScore:              61,
@@ -96,6 +100,8 @@ func (s *AnalysisService) Commodities() model.CommoditiesAnalysis {
 				"Can diversify commodities exposure but drawdowns may be deeper than gold.",
 				"Best treated as a smaller satellite allocation.",
 			},
+			DataSource:  "commodity-model",
+			LastUpdated: "daily model",
 		},
 		FOMOWarning:            "Do not chase gold or silver after large moves. Use target allocation bands and rebalance gradually.",
 		DiversificationWarning: "Commodities can reduce portfolio concentration but should not replace emergency funds, debt buffers, or diversified equity.",
@@ -104,16 +110,20 @@ func (s *AnalysisService) Commodities() model.CommoditiesAnalysis {
 }
 
 func (s *AnalysisService) PortfolioPlan(req model.PortfolioPlanRequest) model.PortfolioPlan {
-	amount := math.Max(req.TotalInvestment-req.EmergencyFundRequirement, 0)
+	amount := investableAmount(req)
 	allocations := buildAllocation(req.RiskAppetite, amount)
 	score, breakdown := scoring.Portfolio(req.RiskAppetite, req.TimeHorizonYears, allocations, req.EmergencyFundRequirement > 0)
+	projections := projection.Amount(amount, max(req.TimeHorizonYears, 1), 0.02, 0.09, 0.14)
+	if strings.EqualFold(req.InvestmentMode, "SIP") {
+		projections = projection.SIP(monthlySIPAmount(req), max(req.TimeHorizonYears, 1), 0.02, 0.09, 0.14)
+	}
 
 	return model.PortfolioPlan{
 		Score:               score,
 		SuggestedAllocation: allocations,
 		DeploymentPlan:      deploymentPlan(req.InvestmentMode, req.RiskAppetite),
-		PhasedSchedule:      phasedSchedule(req.InvestmentMode, amount),
-		Projections:         projection.Amount(amount, max(req.TimeHorizonYears, 1), 0.02, 0.09, 0.14),
+		PhasedSchedule:      phasedSchedule(req.InvestmentMode, amount, monthlySIPAmount(req)),
+		Projections:         projections,
 		RebalancingRules: []string{
 			"Review allocation every 6 months or after a major life event.",
 			"Rebalance when any major asset class drifts more than 5 percentage points from target.",
@@ -123,6 +133,21 @@ func (s *AnalysisService) PortfolioPlan(req model.PortfolioPlanRequest) model.Po
 		ScoreBreakdown:  breakdown,
 		Disclaimer:      ai.Disclaimer,
 	}
+}
+
+func investableAmount(req model.PortfolioPlanRequest) float64 {
+	if strings.EqualFold(req.InvestmentMode, "SIP") {
+		monthly := monthlySIPAmount(req)
+		return math.Max(monthly*12*float64(max(req.TimeHorizonYears, 1))-req.EmergencyFundRequirement, 0)
+	}
+	return math.Max(req.TotalInvestment-req.EmergencyFundRequirement, 0)
+}
+
+func monthlySIPAmount(req model.PortfolioPlanRequest) float64 {
+	if req.MonthlySIP > 0 {
+		return req.MonthlySIP
+	}
+	return math.Max(req.TotalInvestment, 0)
 }
 
 func (s *AnalysisService) Explain(req model.ExplainRequest) model.ExplainResponse {
@@ -158,9 +183,13 @@ func deploymentPlan(mode, risk string) []string {
 	return []string{"Deploy 40% immediately into low-volatility buckets.", "Deploy 30% over the next 3 months.", "Keep 30% for staggered equity entries or rebalancing opportunities."}
 }
 
-func phasedSchedule(mode string, amount float64) []string {
+func phasedSchedule(mode string, amount float64, monthlySIP float64) []string {
 	if strings.EqualFold(mode, "SIP") {
-		return []string{fmt.Sprintf("Monthly SIP estimate: ₹%.0f for 12 months", amount/12), "Prioritize core index and flexi-cap allocations first.", "Add satellite exposure after emergency buffer is funded."}
+		monthly := monthlySIP
+		if monthly <= 0 {
+			monthly = amount / 12
+		}
+		return []string{fmt.Sprintf("Monthly SIP: ₹%.0f", monthly), "Prioritize core index and flexi-cap allocations first.", "Step up SIP annually only if income and emergency buffer allow it."}
 	}
 	return []string{fmt.Sprintf("Month 1: ₹%.0f", amount*0.4), fmt.Sprintf("Months 2-4: ₹%.0f per month", amount*0.1), fmt.Sprintf("Opportunistic reserve: ₹%.0f", amount*0.3)}
 }

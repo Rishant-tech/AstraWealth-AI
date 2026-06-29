@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { CalendarClock, IndianRupee, Loader2, Sparkles } from "lucide-react";
 import { publicApiBase } from "@/lib/api";
 import type { PortfolioPlan, PortfolioPlanRequest } from "@/types/api";
 import { AllocationChart } from "./AllocationChart";
@@ -13,6 +13,7 @@ import { ScoreBadge } from "./ScoreBadge";
 
 const defaultPayload: PortfolioPlanRequest = {
   totalInvestment: 1450000,
+  monthlySIP: 25000,
   emergencyFundRequirement: 250000,
   timeHorizonYears: 7,
   riskAppetite: "Moderate",
@@ -49,12 +50,32 @@ export function PlannerForm() {
     <div className="grid gap-6 lg:grid-cols-[390px_minmax(0,1fr)]">
       <Card title="Inputs" eyebrow="Planner">
         <form onSubmit={submit} className="space-y-4">
-          <NumberField label="Total investment amount" value={form.totalInvestment} onChange={(value) => setForm({ ...form, totalInvestment: value })} />
+          <div>
+            <span className="text-sm text-slate-400">Investment mode</span>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <ModeButton
+                active={form.investmentMode === "Lump sum"}
+                icon={IndianRupee}
+                label="Lump sum"
+                onClick={() => setForm({ ...form, investmentMode: "Lump sum" })}
+              />
+              <ModeButton
+                active={form.investmentMode === "SIP"}
+                icon={CalendarClock}
+                label="Monthly SIP"
+                onClick={() => setForm({ ...form, investmentMode: "SIP" })}
+              />
+            </div>
+          </div>
+          {form.investmentMode === "SIP" ? (
+            <NumberField label="Monthly SIP amount" value={form.monthlySIP} onChange={(value) => setForm({ ...form, monthlySIP: value, totalInvestment: value })} />
+          ) : (
+            <NumberField label="Lump sum amount" value={form.totalInvestment} onChange={(value) => setForm({ ...form, totalInvestment: value })} />
+          )}
           <NumberField label="Emergency fund requirement" value={form.emergencyFundRequirement} onChange={(value) => setForm({ ...form, emergencyFundRequirement: value })} />
           <NumberField label="Time horizon years" value={form.timeHorizonYears} onChange={(value) => setForm({ ...form, timeHorizonYears: value })} />
           <SelectField label="Risk appetite" value={form.riskAppetite} options={["Conservative", "Moderate", "Aggressive"]} onChange={(value) => setForm({ ...form, riskAppetite: value })} />
           <SelectField label="Goal" value={form.goal} options={["Wealth creation", "Retirement", "House", "Emergency", "Passive income"]} onChange={(value) => setForm({ ...form, goal: value })} />
-          <SelectField label="Investment mode" value={form.investmentMode} options={["Lump sum", "SIP"]} onChange={(value) => setForm({ ...form, investmentMode: value })} />
           {error ? <p className="text-sm text-rose">{error}</p> : null}
           <button
             type="submit"
@@ -102,6 +123,31 @@ export function PlannerForm() {
         )}
       </div>
     </div>
+  );
+}
+
+function ModeButton({
+  active,
+  icon: Icon,
+  label,
+  onClick
+}: {
+  active: boolean;
+  icon: typeof IndianRupee;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-3 text-sm font-semibold transition ${
+        active ? "border-teal/50 bg-teal/10 text-teal" : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </button>
   );
 }
 

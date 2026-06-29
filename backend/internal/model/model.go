@@ -82,12 +82,15 @@ type FundAnalysis struct {
 
 type Commodity struct {
 	Name                   string            `json:"name"`
+	CurrentPrice           float64           `json:"currentPrice,omitempty"`
 	Trend                  string            `json:"trend"`
 	Return1Y               float64           `json:"return1Y"`
 	RiskScore              int               `json:"riskScore"`
 	SuggestedMaxAllocation int               `json:"suggestedMaxAllocation"`
 	ScenarioProjections    []ProjectionPoint `json:"scenarioProjections"`
 	Notes                  []string          `json:"notes"`
+	DataSource             string            `json:"dataSource,omitempty"`
+	LastUpdated            string            `json:"lastUpdated,omitempty"`
 }
 
 type CommoditiesAnalysis struct {
@@ -100,6 +103,7 @@ type CommoditiesAnalysis struct {
 
 type PortfolioPlanRequest struct {
 	TotalInvestment          float64 `json:"totalInvestment"`
+	MonthlySIP               float64 `json:"monthlySIP"`
 	EmergencyFundRequirement float64 `json:"emergencyFundRequirement"`
 	TimeHorizonYears         int     `json:"timeHorizonYears"`
 	RiskAppetite             string  `json:"riskAppetite"`

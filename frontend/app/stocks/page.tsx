@@ -1,6 +1,7 @@
 import { Card } from "@/components/Card";
 import { DataTable } from "@/components/DataTable";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
+import { InstrumentDirectory } from "@/components/InstrumentDirectory";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBox } from "@/components/SearchBox";
 import { Shell } from "@/components/Shell";
@@ -16,6 +17,18 @@ export default async function StocksPage() {
       <div className="space-y-6">
         <DisclaimerBanner />
         <SearchBox type="stocks" />
+        <Card title="Stocks A-Z" eyebrow="Directory">
+          <InstrumentDirectory
+            emptyText="No stock available under this alphabet in the current universe."
+            items={stocks.map((stock) => ({
+              id: stock.symbol,
+              title: stock.symbol,
+              subtitle: stock.name,
+              meta: stock.sector,
+              href: `/stocks/${stock.symbol}`
+            }))}
+          />
+        </Card>
         <Card title="Stock universe" eyebrow="Live-enabled">
           <DataTable<Stock>
             rows={stocks}

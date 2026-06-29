@@ -1,4 +1,4 @@
-import { AlertTriangle, Gem, ShieldAlert } from "lucide-react";
+import { AlertTriangle, Gem, ShieldAlert, TrendingUp } from "lucide-react";
 import { Card } from "@/components/Card";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { MetricCard } from "@/components/MetricCard";
@@ -8,7 +8,8 @@ import { RiskBadge } from "@/components/RiskBadge";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { Shell } from "@/components/Shell";
 import { getCommodities, safe } from "@/lib/api";
-import { pct } from "@/lib/format";
+import type { Commodity } from "@/types/api";
+import { inr, pct } from "@/lib/format";
 
 export default async function GoldSilverPage() {
   const data = await safe(getCommodities());
@@ -24,20 +25,8 @@ export default async function GoldSilverPage() {
         ) : (
           <>
             <div className="grid gap-4 md:grid-cols-2">
-              <Card title="Gold trend" action={<RiskBadge risk="Moderate" />}>
-                <p className="text-sm leading-6 text-slate-300">{data.gold.trend}</p>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <MetricCard label="1Y return" value={pct(data.gold.return1Y)} icon={Gem} tone="amber" />
-                  <MetricCard label="Max allocation" value={`${data.gold.suggestedMaxAllocation}%`} delta={`Risk score ${data.gold.riskScore}/100`} tone="teal" />
-                </div>
-              </Card>
-              <Card title="Silver trend" action={<RiskBadge risk="High" />}>
-                <p className="text-sm leading-6 text-slate-300">{data.silver.trend}</p>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <MetricCard label="1Y return" value={pct(data.silver.return1Y)} icon={Gem} tone="sky" />
-                  <MetricCard label="Max allocation" value={`${data.silver.suggestedMaxAllocation}%`} delta={`Risk score ${data.silver.riskScore}/100`} tone="rose" />
-                </div>
-              </Card>
+              <CommodityPanel commodity={data.gold} risk="Moderate" tone="amber" />
+              <CommodityPanel commodity={data.silver} risk="High" tone="sky" />
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
@@ -57,6 +46,28 @@ export default async function GoldSilverPage() {
         )}
       </div>
     </Shell>
+  );
+}
+
+function CommodityPanel({ commodity, risk, tone }: { commodity: Commodity; risk: string; tone: "amber" | "sky" }) {
+  return (
+    <Card title={`${commodity.name} asset panel`} action={<RiskBadge risk={risk} />}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MetricCard label={`${commodity.name} price model`} value={commodity.currentPrice ? inr(commodity.currentPrice) : "Tracked"} icon={Gem} tone={tone} />
+        <MetricCard label="1Y return" value={pct(commodity.return1Y)} icon={TrendingUp} tone={tone} />
+        <MetricCard label="Max allocation" value={`${commodity.suggestedMaxAllocation}%`} delta="Suggested cap" tone="teal" />
+        <MetricCard label="Risk score" value={`${commodity.riskScore}/100`} delta={risk} tone={risk === "High" ? "rose" : "amber"} />
+      </div>
+      <p className="mt-5 text-sm leading-6 text-slate-300">{commodity.trend}</p>
+      <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-xs text-slate-400">
+        Source: {commodity.dataSource || "commodity-model"} · Updated: {commodity.lastUpdated || "daily model"}
+      </div>
+      <div className="mt-4 space-y-2">
+        {commodity.notes.map((note) => (
+          <p key={note} className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-slate-300">{note}</p>
+        ))}
+      </div>
+    </Card>
   );
 }
 
