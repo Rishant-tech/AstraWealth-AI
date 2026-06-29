@@ -1,8 +1,10 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowRight, BarChart3, Gem, PieChart, Search, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { inr } from "@/lib/format";
 import type { AllocationItem, ProjectionPoint } from "@/types/api";
 import { AllocationChart } from "./AllocationChart";
 import { Card } from "./Card";
@@ -11,22 +13,13 @@ import { MetricCard } from "./MetricCard";
 import { ProjectionChart } from "./ProjectionChart";
 import { ScoreBadge } from "./ScoreBadge";
 
-const allocation: AllocationItem[] = [
-  { asset: "Large Cap Equity", percent: 36, amount: 522000, rationale: "Core equity", riskNote: "Market volatility" },
-  { asset: "Flexi Cap", percent: 22, amount: 319000, rationale: "Style diversification", riskNote: "Manager risk" },
-  { asset: "Mid Cap", percent: 14, amount: 203000, rationale: "Growth satellite", riskNote: "Higher drawdown" },
-  { asset: "Debt / Liquid", percent: 18, amount: 261000, rationale: "Stability", riskNote: "Lower upside" },
-  { asset: "Gold", percent: 10, amount: 145000, rationale: "Macro hedge", riskNote: "Can lag equities" }
-];
-
-const projection: ProjectionPoint[] = [
-  { year: 1, bear: 1510000, base: 1580000, bull: 1660000 },
-  { year: 3, bear: 1690000, base: 1880000, bull: 2160000 },
-  { year: 5, bear: 1840000, base: 2240000, bull: 2890000 },
-  { year: 7, bear: 1980000, base: 2680000, bull: 3820000 }
-];
-
 export function HomeExperience() {
+  const [portfolioValue, setPortfolioValue] = useState(1450000);
+  const safeValue = Math.max(portfolioValue, 0);
+  const allocation = useMemo(() => buildAllocation(safeValue), [safeValue]);
+  const projection = useMemo(() => buildProjection(safeValue), [safeValue]);
+  const planHref = `/portfolio-planner?amount=${safeValue}`;
+
   return (
     <div className="market-grid min-h-screen bg-ink-950 pb-28 lg:pb-12">
       <section className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] lg:px-8">
@@ -35,13 +28,23 @@ export function HomeExperience() {
             <Sparkles className="h-3.5 w-3.5" />
             AI investment analysis
           </p>
-          <h1 className="mt-6 font-mono text-5xl font-bold leading-none text-white sm:text-6xl lg:text-7xl">₹14,50,000</h1>
+          <h1 className="mt-6 font-mono text-5xl font-bold leading-none text-white sm:text-6xl lg:text-7xl">{inr(safeValue)}</h1>
           <p className="mt-5 text-2xl font-semibold text-white sm:text-3xl">Build smarter wealth with AI</p>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
             Analyze Indian stocks, mutual funds, gold, silver, and portfolio allocation with risk scoring and scenario projections.
           </p>
+          <label className="mt-6 block max-w-sm">
+            <span className="text-sm text-slate-400">Portfolio amount</span>
+            <input
+              type="number"
+              min={0}
+              value={portfolioValue}
+              onChange={(event) => setPortfolioValue(Number(event.target.value))}
+              className="mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 font-mono text-lg text-white outline-none transition focus:border-teal/50"
+            />
+          </label>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/portfolio-planner" className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-teal/90">
+            <Link href={planHref} className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-teal/90">
               <PieChart className="h-4 w-4" />
               Plan My Portfolio
             </Link>
@@ -68,7 +71,7 @@ export function HomeExperience() {
             </div>
           </Card>
           <div className="grid gap-4 sm:grid-cols-2">
-            <MetricCard label="Base projection" value="₹26.8L" delta="7 year scenario, not guaranteed" icon={TrendingUp} tone="sky" />
+            <MetricCard label="Base projection" value={inr(projection[3]?.base || 0)} delta="7 year scenario, not guaranteed" icon={TrendingUp} tone="sky" />
             <MetricCard label="Risk alerts" value="3" delta="Valuation, FOMO, liquidity" icon={AlertTriangle} tone="amber" />
           </div>
         </motion.div>
@@ -115,6 +118,26 @@ export function HomeExperience() {
       </section>
     </div>
   );
+}
+
+function buildAllocation(amount: number): AllocationItem[] {
+  const rows = [
+    { asset: "Large Cap Equity", percent: 36, rationale: "Core equity", riskNote: "Market volatility" },
+    { asset: "Flexi Cap", percent: 22, rationale: "Style diversification", riskNote: "Manager risk" },
+    { asset: "Mid Cap", percent: 14, rationale: "Growth satellite", riskNote: "Higher drawdown" },
+    { asset: "Debt / Liquid", percent: 18, rationale: "Stability", riskNote: "Lower upside" },
+    { asset: "Gold", percent: 10, rationale: "Macro hedge", riskNote: "Can lag equities" }
+  ];
+  return rows.map((row) => ({ ...row, amount: Math.round((amount * row.percent) / 100) }));
+}
+
+function buildProjection(amount: number): ProjectionPoint[] {
+  return [1, 3, 5, 7].map((year) => ({
+    year,
+    bear: Math.round(amount * Math.pow(1.045, year)),
+    base: Math.round(amount * Math.pow(1.092, year)),
+    bull: Math.round(amount * Math.pow(1.148, year))
+  }));
 }
 
 function MiniStat({ label, value }: { label: string; value: string }) {

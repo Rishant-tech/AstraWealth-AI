@@ -21,8 +21,11 @@ const defaultPayload: PortfolioPlanRequest = {
   investmentMode: "Lump sum"
 };
 
-export function PlannerForm() {
-  const [form, setForm] = useState(defaultPayload);
+export function PlannerForm({ initialAmount }: { initialAmount?: number }) {
+  const [form, setForm] = useState<PortfolioPlanRequest>({
+    ...defaultPayload,
+    totalInvestment: initialAmount ?? defaultPayload.totalInvestment
+  });
   const [plan, setPlan] = useState<PortfolioPlan | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
