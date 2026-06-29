@@ -1,23 +1,15 @@
-import { Activity, AlertTriangle, Gem, IndianRupee, TrendingUp } from "lucide-react";
-import { AllocationChart } from "@/components/AllocationChart";
+import { Activity, AlertTriangle, Gem, TrendingUp } from "lucide-react";
 import { Card } from "@/components/Card";
+import { DashboardAllocationCard } from "@/components/DashboardAllocationCard";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { MetricCard } from "@/components/MetricCard";
 import { PageHeader } from "@/components/PageHeader";
+import { PortfolioValueMetric } from "@/components/PortfolioValueMetric";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { Shell } from "@/components/Shell";
 import { getCommodities, getFundAnalysis, getStockAnalysis, safe } from "@/lib/api";
-import { inr, pct } from "@/lib/format";
-import type { AllocationItem } from "@/types/api";
-
-const allocation: AllocationItem[] = [
-  { asset: "Large Cap Equity", percent: 36, amount: 522000, rationale: "Core equity", riskNote: "Market risk" },
-  { asset: "Flexi Cap", percent: 22, amount: 319000, rationale: "Style diversification", riskNote: "Manager risk" },
-  { asset: "Mid Cap", percent: 14, amount: 203000, rationale: "Growth satellite", riskNote: "Higher drawdown" },
-  { asset: "Debt / Liquid", percent: 18, amount: 261000, rationale: "Stability", riskNote: "Lower upside" },
-  { asset: "Gold", percent: 10, amount: 145000, rationale: "Hedge", riskNote: "Can lag equities" }
-];
+import { pct } from "@/lib/format";
 
 export default async function DashboardPage() {
   const [sbin, icici, flexi, commodities] = await Promise.all([
@@ -37,16 +29,14 @@ export default async function DashboardPage() {
       <div className="space-y-6">
         <DisclaimerBanner />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MetricCard label="Total portfolio value" value={inr(1450000)} delta="+11.8% modeled 1Y path" icon={IndianRupee} />
+          <PortfolioValueMetric />
           <MetricCard label="Market mood" value="Constructive" delta="Momentum positive, valuation watch" icon={Activity} tone="sky" />
           <MetricCard label="Gold/silver trend" value="Hedge bid" delta={commodities ? `Gold ${pct(commodities.gold.return1Y)} 1Y` : "API unavailable"} icon={Gem} tone="amber" />
           <MetricCard label="Risk alerts" value="3" delta="Concentration, FOMO, liquidity" icon={AlertTriangle} tone="rose" />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.65fr)]">
-          <Card title="Asset allocation">
-            <AllocationChart data={allocation} />
-          </Card>
+          <DashboardAllocationCard />
           <Card title="AI portfolio score" action={<ScoreBadge score={82} label="Health" />}>
             <p className="text-sm leading-6 text-slate-300">
               Diversified across core equity, debt, and gold. Main improvement area is staged deployment and keeping emergency capital separate.

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarClock, IndianRupee, Loader2, Sparkles } from "lucide-react";
 import { publicApiBase } from "@/lib/api";
+import { DEFAULT_PORTFOLIO_AMOUNT } from "@/lib/portfolio";
+import { usePortfolioAmount } from "@/lib/usePortfolioAmount";
 import type { PortfolioPlan, PortfolioPlanRequest } from "@/types/api";
 import { AllocationChart } from "./AllocationChart";
 import { AssetAllocationCard } from "./AssetAllocationCard";
@@ -12,7 +14,7 @@ import { ProjectionChart } from "./ProjectionChart";
 import { ScoreBadge } from "./ScoreBadge";
 
 const defaultPayload: PortfolioPlanRequest = {
-  totalInvestment: 1450000,
+  totalInvestment: DEFAULT_PORTFOLIO_AMOUNT,
   monthlySIP: 25000,
   emergencyFundRequirement: 250000,
   timeHorizonYears: 7,
@@ -22,13 +24,33 @@ const defaultPayload: PortfolioPlanRequest = {
 };
 
 export function PlannerForm({ initialAmount }: { initialAmount?: number }) {
+  const { amount: syncedAmount, setAmount: setSyncedAmount } = usePortfolioAmount(initialAmount ?? DEFAULT_PORTFOLIO_AMOUNT, Boolean(initialAmount));
   const [form, setForm] = useState<PortfolioPlanRequest>({
     ...defaultPayload,
-    totalInvestment: initialAmount ?? defaultPayload.totalInvestment
+    totalInvestment: syncedAmount
   });
   const [plan, setPlan] = useState<PortfolioPlan | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setForm((current) => {
+      if (current.investmentMode === "SIP") {
+        return { ...current, totalInvestment: syncedAmount, monthlySIP: syncedAmount };
+      }
+      return { ...current, totalInvestment: syncedAmount };
+    });
+  }, [syncedAmount]);
+
+  function updateInvestmentAmount(value: number) {
+    setSyncedAmount(value);
+    setForm((current) => ({ ...current, totalInvestment: value }));
+  }
+
+  function updateSIPAmount(value: number) {
+    setSyncedAmount(value);
+    setForm((current) => ({ ...current, monthlySIP: value, totalInvestment: value }));
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -72,9 +94,9 @@ export function PlannerForm({ initialAmount }: { initialAmount?: number }) {
               </div>
             </div>
             {form.investmentMode === "SIP" ? (
-              <NumberField label="Monthly SIP amount" value={form.monthlySIP} onChange={(value) => setForm({ ...form, monthlySIP: value, totalInvestment: value })} />
+              <NumberField label="Monthly SIP amount" value={form.monthlySIP} onChange={updateSIPAmount} />
             ) : (
-              <NumberField label="Lump sum amount" value={form.totalInvestment} onChange={(value) => setForm({ ...form, totalInvestment: value })} />
+              <NumberField label="Lump sum amount" value={form.totalInvestment} onChange={updateInvestmentAmount} />
             )}
             <NumberField label="Emergency fund requirement" value={form.emergencyFundRequirement} onChange={(value) => setForm({ ...form, emergencyFundRequirement: value })} />
             <NumberField label="Time horizon years" value={form.timeHorizonYears} onChange={(value) => setForm({ ...form, timeHorizonYears: value })} />

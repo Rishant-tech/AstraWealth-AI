@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowRight, BarChart3, Gem, PieChart, Search, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 import { inr } from "@/lib/format";
-import type { AllocationItem, ProjectionPoint } from "@/types/api";
+import { buildPortfolioAllocation, buildPortfolioProjection, DEFAULT_PORTFOLIO_AMOUNT } from "@/lib/portfolio";
+import { usePortfolioAmount } from "@/lib/usePortfolioAmount";
 import { AllocationChart } from "./AllocationChart";
 import { Card } from "./Card";
 import { DisclaimerBanner } from "./DisclaimerBanner";
@@ -14,11 +15,10 @@ import { ProjectionChart } from "./ProjectionChart";
 import { ScoreBadge } from "./ScoreBadge";
 
 export function HomeExperience() {
-  const [portfolioValue, setPortfolioValue] = useState(1450000);
-  const safeValue = Math.max(portfolioValue, 0);
-  const allocation = useMemo(() => buildAllocation(safeValue), [safeValue]);
-  const projection = useMemo(() => buildProjection(safeValue), [safeValue]);
-  const planHref = `/portfolio-planner?amount=${safeValue}`;
+  const { amount: portfolioValue, setAmount: setPortfolioValue } = usePortfolioAmount(DEFAULT_PORTFOLIO_AMOUNT);
+  const allocation = useMemo(() => buildPortfolioAllocation(portfolioValue), [portfolioValue]);
+  const projection = useMemo(() => buildPortfolioProjection(portfolioValue), [portfolioValue]);
+  const planHref = `/portfolio-planner?amount=${portfolioValue}`;
 
   return (
     <div className="market-grid min-h-screen bg-ink-950 pb-28 lg:pb-12">
@@ -28,7 +28,7 @@ export function HomeExperience() {
             <Sparkles className="h-3.5 w-3.5" />
             AI investment analysis
           </p>
-          <h1 className="mt-6 max-w-full break-words font-mono text-4xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">{inr(safeValue)}</h1>
+          <h1 className="mt-6 max-w-full break-words font-mono text-4xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">{inr(portfolioValue)}</h1>
           <p className="mt-5 text-2xl font-semibold text-white sm:text-3xl">Build smarter wealth with AI</p>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
             Analyze Indian stocks, mutual funds, gold, silver, and portfolio allocation with risk scoring and scenario projections.
@@ -118,26 +118,6 @@ export function HomeExperience() {
       </section>
     </div>
   );
-}
-
-function buildAllocation(amount: number): AllocationItem[] {
-  const rows = [
-    { asset: "Large Cap Equity", percent: 36, rationale: "Core equity", riskNote: "Market volatility" },
-    { asset: "Flexi Cap", percent: 22, rationale: "Style diversification", riskNote: "Manager risk" },
-    { asset: "Mid Cap", percent: 14, rationale: "Growth satellite", riskNote: "Higher drawdown" },
-    { asset: "Debt / Liquid", percent: 18, rationale: "Stability", riskNote: "Lower upside" },
-    { asset: "Gold", percent: 10, rationale: "Macro hedge", riskNote: "Can lag equities" }
-  ];
-  return rows.map((row) => ({ ...row, amount: Math.round((amount * row.percent) / 100) }));
-}
-
-function buildProjection(amount: number): ProjectionPoint[] {
-  return [1, 3, 5, 7].map((year) => ({
-    year,
-    bear: Math.round(amount * Math.pow(1.045, year)),
-    base: Math.round(amount * Math.pow(1.092, year)),
-    bull: Math.round(amount * Math.pow(1.148, year))
-  }));
 }
 
 function MiniStat({ label, value }: { label: string; value: string }) {
