@@ -47,48 +47,50 @@ export function PlannerForm() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[390px_minmax(0,1fr)]">
-      <Card title="Inputs" eyebrow="Planner">
-        <form onSubmit={submit} className="space-y-4">
-          <div>
-            <span className="text-sm text-slate-400">Investment mode</span>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              <ModeButton
-                active={form.investmentMode === "Lump sum"}
-                icon={IndianRupee}
-                label="Lump sum"
-                onClick={() => setForm({ ...form, investmentMode: "Lump sum" })}
-              />
-              <ModeButton
-                active={form.investmentMode === "SIP"}
-                icon={CalendarClock}
-                label="Monthly SIP"
-                onClick={() => setForm({ ...form, investmentMode: "SIP" })}
-              />
+    <div className="grid gap-6 lg:grid-cols-[390px_minmax(0,1fr)] lg:items-start">
+      <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+        <Card title="Inputs" eyebrow="Planner">
+          <form onSubmit={submit} className="space-y-4">
+            <div>
+              <span className="text-sm text-slate-400">Investment mode</span>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <ModeButton
+                  active={form.investmentMode === "Lump sum"}
+                  icon={IndianRupee}
+                  label="Lump sum"
+                  onClick={() => setForm({ ...form, investmentMode: "Lump sum" })}
+                />
+                <ModeButton
+                  active={form.investmentMode === "SIP"}
+                  icon={CalendarClock}
+                  label="Monthly SIP"
+                  onClick={() => setForm({ ...form, investmentMode: "SIP" })}
+                />
+              </div>
             </div>
-          </div>
-          {form.investmentMode === "SIP" ? (
-            <NumberField label="Monthly SIP amount" value={form.monthlySIP} onChange={(value) => setForm({ ...form, monthlySIP: value, totalInvestment: value })} />
-          ) : (
-            <NumberField label="Lump sum amount" value={form.totalInvestment} onChange={(value) => setForm({ ...form, totalInvestment: value })} />
-          )}
-          <NumberField label="Emergency fund requirement" value={form.emergencyFundRequirement} onChange={(value) => setForm({ ...form, emergencyFundRequirement: value })} />
-          <NumberField label="Time horizon years" value={form.timeHorizonYears} onChange={(value) => setForm({ ...form, timeHorizonYears: value })} />
-          <SelectField label="Risk appetite" value={form.riskAppetite} options={["Conservative", "Moderate", "Aggressive"]} onChange={(value) => setForm({ ...form, riskAppetite: value })} />
-          <SelectField label="Goal" value={form.goal} options={["Wealth creation", "Retirement", "House", "Emergency", "Passive income"]} onChange={(value) => setForm({ ...form, goal: value })} />
-          {error ? <p className="text-sm text-rose">{error}</p> : null}
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal px-4 py-3 text-sm font-semibold text-ink-950 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Generate plan
-          </button>
-        </form>
-      </Card>
+            {form.investmentMode === "SIP" ? (
+              <NumberField label="Monthly SIP amount" value={form.monthlySIP} onChange={(value) => setForm({ ...form, monthlySIP: value, totalInvestment: value })} />
+            ) : (
+              <NumberField label="Lump sum amount" value={form.totalInvestment} onChange={(value) => setForm({ ...form, totalInvestment: value })} />
+            )}
+            <NumberField label="Emergency fund requirement" value={form.emergencyFundRequirement} onChange={(value) => setForm({ ...form, emergencyFundRequirement: value })} />
+            <NumberField label="Time horizon years" value={form.timeHorizonYears} onChange={(value) => setForm({ ...form, timeHorizonYears: value })} />
+            <SelectField label="Risk appetite" value={form.riskAppetite} options={["Conservative", "Moderate", "Aggressive"]} onChange={(value) => setForm({ ...form, riskAppetite: value })} />
+            <SelectField label="Goal" value={form.goal} options={["Wealth creation", "Retirement", "House", "Emergency", "Passive income"]} onChange={(value) => setForm({ ...form, goal: value })} />
+            {error ? <p className="text-sm text-rose">{error}</p> : null}
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal px-4 py-3 text-sm font-semibold text-ink-950 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              Generate plan
+            </button>
+          </form>
+        </Card>
+      </div>
 
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         {!plan ? (
           <Card className="flex min-h-[520px] items-center justify-center text-center">
             <div>
