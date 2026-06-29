@@ -33,6 +33,8 @@ services:
       DATABASE_URL: postgres://investment:investment@postgres:5432/investment_ai?sslmode=disable
       REDIS_URL: redis://redis:6379
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DATA_MODE: ${DATA_MODE:-live}
+      LIVE_QUOTE_CACHE_TTL_SECONDS: ${LIVE_QUOTE_CACHE_TTL_SECONDS:-60}
     ports:
       - "8080:8080"
     depends_on:

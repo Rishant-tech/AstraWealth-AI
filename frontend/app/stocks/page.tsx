@@ -16,7 +16,7 @@ export default async function StocksPage() {
       <div className="space-y-6">
         <DisclaimerBanner />
         <SearchBox type="stocks" />
-        <Card title="Seed stock universe" eyebrow="Mock data">
+        <Card title="Stock universe" eyebrow="Live-enabled">
           <DataTable<Stock>
             rows={stocks}
             columns={[
@@ -25,7 +25,8 @@ export default async function StocksPage() {
               { key: "price", header: "Price", render: (row) => inr(row.currentPrice) },
               { key: "return", header: "1Y", render: (row) => pct(row.return1Y) },
               { key: "pe", header: "PE", render: (row) => row.peRatio.toFixed(1) },
-              { key: "roe", header: "ROE", render: (row) => pct(row.roe) }
+              { key: "roe", header: "ROE", render: (row) => pct(row.roe) },
+              { key: "source", header: "Source", render: (row) => row.dataSource || "mock-seed" }
             ]}
           />
         </Card>

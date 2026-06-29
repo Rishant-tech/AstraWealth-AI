@@ -16,7 +16,14 @@ import (
 func main() {
 	port := env("PORT", "8080")
 
-	repo := repository.NewMemoryRepository(seed.Stocks(), seed.Funds())
+	baseRepo := repository.NewMemoryRepository(seed.Stocks(), seed.Funds())
+	var repo repository.Repository = baseRepo
+	if env("DATA_MODE", "mock") == "live" {
+		repo = repository.NewLiveRepository(baseRepo)
+		log.Printf("market data mode: live quotes with mock fallback")
+	} else {
+		log.Printf("market data mode: mock seed data")
+	}
 	explainer := ai.NewExplainer(os.Getenv("OPENAI_API_KEY"))
 	svc := service.NewAnalysisService(repo, explainer)
 	router := api.NewRouter(svc)

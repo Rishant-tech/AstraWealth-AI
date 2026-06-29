@@ -2,7 +2,7 @@
 
 A full-stack AI-powered investment analysis demo for Indian stocks, mutual fund categories, gold, silver, portfolio allocation, and scenario projections.
 
-The app uses seeded mock data, deterministic scoring, and rule-based AI explanations by default. If `OPENAI_API_KEY` is configured, the backend can use OpenAI for short explanations. If it is missing, the app still works fully.
+The app uses deterministic scoring, rule-based AI explanations, and seeded fundamentals. By default Docker runs `DATA_MODE=live`, which refreshes Indian stock quotes and historical returns from Yahoo Finance's chart endpoint with mock fallback. If `OPENAI_API_KEY` is configured, the backend can use OpenAI for short explanations. If it is missing, the app still works fully.
 
 ## Stack
 
@@ -27,6 +27,12 @@ Optional AI explanations:
 
 ```bash
 OPENAI_API_KEY=your_key docker compose up --build
+```
+
+Force mock-only market data:
+
+```bash
+DATA_MODE=mock docker compose up --build
 ```
 
 ## Project Structure
@@ -73,11 +79,11 @@ AstraWealth-AI/
 
 `GET /api/stocks/search?q=`
 
-Returns seeded Indian stock matches.
+Returns the seeded Indian stock universe. In `DATA_MODE=live`, stock detail requests refresh quote, 1D/1M/6M/1Y returns, and moving averages from the live-enabled provider.
 
 `GET /api/stocks/{symbol}/analysis`
 
-Returns price, returns, PE, PB, ROE, ROCE, debt-to-equity, growth, promoter holding, FII/DII placeholder, news sentiment placeholder, technical trend, AI score, label, bull case, bear case, risks, and 1Y/3Y/5Y scenarios.
+Returns price, returns, PE, PB, ROE, ROCE, debt-to-equity, growth, promoter holding, FII/DII placeholder, news sentiment placeholder, technical trend, AI score, label, bull case, bear case, risks, and 1Y/3Y/5Y scenarios. The response includes `dataSource` and `lastUpdated` when live quote refresh succeeds.
 
 Seeded symbols:
 
@@ -147,7 +153,8 @@ Portfolio score includes diversification, risk alignment, time horizon fit, liqu
 
 ## Limitations
 
-- Uses seeded mock data, not live market data.
+- Stock fundamentals and the searchable universe are seeded. In `DATA_MODE=live`, quote, return, and moving-average fields are refreshed from Yahoo Finance's unofficial chart endpoint and may be delayed or unavailable.
+- For licensed production real-time NSE/BSE redistribution, connect an authorized market data vendor such as Global Datafeeds, TrueData, or an approved broker/vendor API.
 - FII/DII, news sentiment, Sharpe, alpha, beta, rolling return, drawdown, and fund manager fields are placeholders.
 - PostgreSQL and Redis are included for full-stack infrastructure readiness, while the current repository implementation serves seeded in-memory data.
 - Projections are simplified scenarios for product demonstration.

@@ -28,6 +28,8 @@ export type Stock = {
   movingAverage50: number;
   movingAverage200: number;
   sector: string;
+  dataSource?: string;
+  lastUpdated?: string;
 };
 
 export type StockAnalysis = {

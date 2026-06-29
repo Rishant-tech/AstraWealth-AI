@@ -21,6 +21,8 @@ type Stock struct {
 	MovingAverage50  float64 `json:"movingAverage50"`
 	MovingAverage200 float64 `json:"movingAverage200"`
 	Sector           string  `json:"sector"`
+	DataSource       string  `json:"dataSource,omitempty"`
+	LastUpdated      string  `json:"lastUpdated,omitempty"`
 }
 
 type Fund struct {

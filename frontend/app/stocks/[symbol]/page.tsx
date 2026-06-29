@@ -19,6 +19,10 @@ export default async function StockDetailPage({ params }: { params: { symbol: st
       <PageHeader eyebrow="Stock analysis" title={`${stock.symbol} · ${stock.name}`} description={stock.sector} />
       <div className="space-y-6">
         <DisclaimerBanner text={analysis.disclaimer} />
+        <div className="rounded-lg border border-sky/25 bg-sky/10 p-4 text-sm text-sky">
+          Quote source: {stock.dataSource || "mock-seed"}
+          {stock.lastUpdated ? ` · Last updated ${new Date(stock.lastUpdated).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}` : ""}
+        </div>
         <Card title="AI recommendation" action={<ScoreBadge score={analysis.score} label={analysis.label} />}>
           <p className="text-sm leading-6 text-slate-300">{analysis.explanation}</p>
           <p className="mt-4 rounded-lg border border-sky/25 bg-sky/10 p-3 text-sm text-sky">{analysis.technicalTrend}</p>
