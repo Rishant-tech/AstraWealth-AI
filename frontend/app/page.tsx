@@ -1,5 +1,5 @@
-import { CylinderScrollSection } from "@/components/CylinderScrollSection";
+import { HomeExperience } from "@/components/HomeExperience";
 
 export default function HomePage() {
-  return <CylinderScrollSection />;
+  return <HomeExperience />;
 }
