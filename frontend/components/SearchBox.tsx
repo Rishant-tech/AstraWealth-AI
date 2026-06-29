@@ -28,10 +28,11 @@ export function SearchBox({ type }: { type: "stocks" | "funds" }) {
         if (!response.ok) throw new Error("Search failed");
         return response.json() as Promise<SearchResult[]>;
       })
-      .then(setResults)
-      .catch((err: Error) => {
-        if (err.name !== "AbortError") {
+      .then((items) => setResults(Array.isArray(items) ? items : []))
+      .catch((err: unknown) => {
+        if (!(err instanceof DOMException && err.name === "AbortError")) {
           setError("Search is unavailable. Check that the backend API is running.");
+          setResults([]);
         }
       })
       .finally(() => setLoading(false));
@@ -52,7 +53,7 @@ export function SearchBox({ type }: { type: "stocks" | "funds" }) {
       </label>
       {error ? <p className="mt-3 text-sm text-rose">{error}</p> : null}
       <div className="mt-3 grid gap-2">
-        {results.length === 0 && !loading ? <p className="px-2 py-3 text-sm text-slate-500">No matching mock instrument found.</p> : null}
+        {results.length === 0 && !loading ? <p className="px-2 py-3 text-sm text-slate-500">No matching instrument found.</p> : null}
         {results.map((result) => {
           const id = result.symbol || result.id || "";
           return (

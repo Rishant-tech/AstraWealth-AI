@@ -31,7 +31,7 @@ func (r *MemoryRepository) SearchStocks(query string) []model.Stock {
 		return r.stocks
 	}
 
-	var results []model.Stock
+	results := make([]model.Stock, 0)
 	for _, stock := range r.stocks {
 		if strings.Contains(strings.ToLower(stock.Symbol), query) || strings.Contains(strings.ToLower(stock.Name), query) {
 			results = append(results, stock)
@@ -56,7 +56,7 @@ func (r *MemoryRepository) SearchFunds(query string) []model.Fund {
 		return r.funds
 	}
 
-	var results []model.Fund
+	results := make([]model.Fund, 0)
 	for _, fund := range r.funds {
 		haystack := strings.ToLower(fund.ID + " " + fund.Name + " " + fund.Category)
 		if strings.Contains(haystack, query) {
