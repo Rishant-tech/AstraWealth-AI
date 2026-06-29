@@ -54,11 +54,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </header>
           <main className="pt-16">{children}</main>
           <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-ink-950/90 backdrop-blur-xl lg:hidden">
-            <div className="grid grid-cols-5 px-2 py-2">
-              {navItems.slice(0, 5).map((item) => (
-                <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] text-slate-300">
+            <div className="flex gap-1 overflow-x-auto px-2 py-2">
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href} className="flex min-w-[72px] flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] text-slate-300">
                   <item.icon className="h-4 w-4" />
-                  {item.label}
+                  <span className="max-w-full truncate">{item.label}</span>
                 </Link>
               ))}
             </div>

@@ -8,8 +8,8 @@ const colors = ["#29D3B5", "#56B6FF", "#F2B84B", "#9B8CFF", "#FF6B8A", "#8BE28B"
 
 export function AllocationChart({ data }: { data: AllocationItem[] }) {
   return (
-    <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
-      <div className="h-64">
+    <div className="grid min-w-0 gap-4 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
+      <div className="h-56 min-w-0 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie data={data} dataKey="percent" nameKey="asset" innerRadius={58} outerRadius={94} paddingAngle={3}>
@@ -26,12 +26,12 @@ export function AllocationChart({ data }: { data: AllocationItem[] }) {
       </div>
       <div className="space-y-3">
         {data.map((item, index) => (
-          <div key={item.asset} className="flex items-center justify-between gap-3 text-sm">
-            <span className="flex items-center gap-2 text-slate-300">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colors[index % colors.length] }} />
-              {item.asset}
+          <div key={item.asset} className="flex items-start justify-between gap-3 text-sm">
+            <span className="flex min-w-0 items-start gap-2 text-slate-300">
+              <span className="mt-1 h-2.5 w-2.5 flex-none rounded-full" style={{ backgroundColor: colors[index % colors.length] }} />
+              <span className="break-words">{item.asset}</span>
             </span>
-            <span className="font-mono text-white">{item.percent}%</span>
+            <span className="flex-none font-mono text-white">{item.percent}%</span>
           </div>
         ))}
       </div>

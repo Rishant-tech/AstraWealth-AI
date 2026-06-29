@@ -6,11 +6,11 @@ import { inr } from "@/lib/format";
 
 export function ProjectionChart({ data, currency = true }: { data: ProjectionPoint[]; currency?: boolean }) {
   return (
-    <div className="h-72 w-full">
+    <div className="h-64 min-w-0 sm:h-72">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ left: 0, right: 12, top: 10, bottom: 0 }}>
+        <LineChart data={data} margin={{ left: 0, right: 8, top: 10, bottom: 0 }}>
           <XAxis dataKey="year" stroke="#728098" tickLine={false} axisLine={false} tickFormatter={(year) => `Y${year}`} />
-          <YAxis stroke="#728098" tickLine={false} axisLine={false} width={70} tickFormatter={(value) => (currency ? compactInr(value) : `${value}`)} />
+          <YAxis stroke="#728098" tickLine={false} axisLine={false} width={58} tickFormatter={(value) => (currency ? compactInr(value) : `${value}`)} />
           <Tooltip
             contentStyle={{ background: "#0F1724", border: "1px solid #223047", borderRadius: 8, color: "#F5F7FB" }}
             formatter={(value: string | number) => {

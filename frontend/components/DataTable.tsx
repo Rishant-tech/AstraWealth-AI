@@ -8,7 +8,7 @@ type Column<T> = {
 
 export function DataTable<T>({ columns, rows }: { columns: Column<T>[]; rows: T[] }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-line">
+    <div className="min-w-0 overflow-hidden rounded-lg border border-line">
       <table className="hidden w-full border-collapse md:table">
         <thead className="bg-white/5 text-left text-xs uppercase tracking-[0.14em] text-slate-500">
           <tr>
@@ -35,9 +35,9 @@ export function DataTable<T>({ columns, rows }: { columns: Column<T>[]; rows: T[
         {rows.map((row, index) => (
           <div key={index} className="space-y-3 bg-ink-850/60 p-4">
             {columns.map((column) => (
-              <div key={column.key} className="flex items-start justify-between gap-4 text-sm">
+              <div key={column.key} className="grid grid-cols-[minmax(96px,0.8fr)_minmax(0,1fr)] items-start gap-4 text-sm">
                 <span className="text-slate-500">{column.header}</span>
-                <span className="text-right text-slate-200">{column.render(row)}</span>
+                <span className="min-w-0 break-words text-right text-slate-200">{column.render(row)}</span>
               </div>
             ))}
           </div>

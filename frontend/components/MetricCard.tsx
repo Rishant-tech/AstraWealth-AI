@@ -19,17 +19,17 @@ const tones = {
 
 export function MetricCard({ label, value, delta, icon: Icon, tone = "teal" }: MetricCardProps) {
   return (
-    <Card className="min-h-[132px]">
+    <Card className="min-h-[132px] min-w-0">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm text-slate-400">{label}</p>
+        <p className="min-w-0 text-sm text-slate-400">{label}</p>
         {Icon ? (
-          <span className={`grid h-9 w-9 place-items-center rounded-lg border ${tones[tone]}`}>
+          <span className={`grid h-9 w-9 flex-none place-items-center rounded-lg border ${tones[tone]}`}>
             <Icon className="h-4 w-4" />
           </span>
         ) : null}
       </div>
-      <p className="mt-4 font-mono text-2xl font-semibold text-white md:text-3xl">{value}</p>
-      {delta ? <p className="mt-2 text-sm text-slate-400">{delta}</p> : null}
+      <p className="mt-4 break-words font-mono text-[1.65rem] font-semibold leading-tight text-white md:text-3xl">{value}</p>
+      {delta ? <p className="mt-2 break-words text-sm text-slate-400">{delta}</p> : null}
     </Card>
   );
 }

@@ -28,7 +28,7 @@ export function HomeExperience() {
             <Sparkles className="h-3.5 w-3.5" />
             AI investment analysis
           </p>
-          <h1 className="mt-6 font-mono text-5xl font-bold leading-none text-white sm:text-6xl lg:text-7xl">{inr(safeValue)}</h1>
+          <h1 className="mt-6 max-w-full break-words font-mono text-4xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">{inr(safeValue)}</h1>
           <p className="mt-5 text-2xl font-semibold text-white sm:text-3xl">Build smarter wealth with AI</p>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
             Analyze Indian stocks, mutual funds, gold, silver, and portfolio allocation with risk scoring and scenario projections.
