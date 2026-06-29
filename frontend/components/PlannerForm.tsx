@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { CalendarClock, IndianRupee, Loader2, Sparkles } from "lucide-react";
-import { publicApiBase } from "@/lib/api";
 import { DEFAULT_PORTFOLIO_AMOUNT } from "@/lib/portfolio";
 import { usePortfolioAmount } from "@/lib/usePortfolioAmount";
 import type { PortfolioPlan, PortfolioPlanRequest } from "@/types/api";
@@ -57,7 +56,8 @@ export function PlannerForm({ initialAmount }: { initialAmount?: number }) {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`${publicApiBase}/api/portfolio/plan`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const response = await fetch(`${apiUrl}/api/portfolio/plan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form)
