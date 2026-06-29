@@ -33,25 +33,27 @@ export function HomeExperience() {
           <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
             Analyze Indian stocks, mutual funds, gold, silver, and portfolio allocation with risk scoring and scenario projections.
           </p>
-          <label className="mt-6 block max-w-sm">
-            <span className="text-sm text-slate-400">Portfolio amount</span>
-            <input
-              type="number"
-              min={0}
-              value={portfolioValue}
-              onChange={(event) => setPortfolioValue(Number(event.target.value))}
-              className="mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 font-mono text-lg text-white outline-none transition focus:border-teal/50"
-            />
-          </label>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href={planHref} className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-teal/90">
-              <PieChart className="h-4 w-4" />
-              Plan My Portfolio
-            </Link>
-            <Link href="/stocks" className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-sky/40">
-              <Search className="h-4 w-4" />
-              Analyze Stock
-            </Link>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end">
+            <label className="min-w-0 sm:w-56">
+              <span className="text-sm text-slate-400">Portfolio amount</span>
+              <input
+                type="number"
+                min={0}
+                value={portfolioValue}
+                onChange={(event) => setPortfolioValue(Number(event.target.value))}
+                className="mt-2 h-12 w-full rounded-lg border border-white/10 bg-white/5 px-3 font-mono text-base text-white outline-none transition focus:border-teal/50"
+              />
+            </label>
+            <div className="grid gap-3 sm:flex sm:flex-none">
+              <Link href={planHref} className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-teal px-5 text-sm font-semibold text-ink-950 transition hover:bg-teal/90">
+                <PieChart className="h-4 w-4" />
+                Plan My Portfolio
+              </Link>
+              <Link href="/stocks" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition hover:border-sky/40">
+                <Search className="h-4 w-4" />
+                Analyze Stock
+              </Link>
+            </div>
           </div>
         </motion.div>
 
